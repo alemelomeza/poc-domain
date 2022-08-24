@@ -1,10 +1,19 @@
 package entity
 
+// Mechanic Types
 const (
-	beforAndNow     int = 1
-	nXP             int = 2
-	combo           int = 3
-	whitoutMechanic int = 4
+	BeforAndNowMechanic int = 1
+	NXPMechanic         int = 2
+	ComboMechanic       int = 3
+	WhitoutMechanic     int = 4
+)
+
+// Mechanic statuses
+const (
+	ApprovedMechanic int = 1 // Valid mechanic
+	ForcedMechanic   int = 3 // Valid mechanic
+	RejectedMechanic int = 2 // Invalid mechanic
+	DeletedMechanic  int = 4 // Invalid mechanic
 )
 
 type Mechanic struct {
@@ -19,8 +28,13 @@ type Mechanic struct {
 }
 
 func (e *Mechanic) Validate() bool {
+	notApproved := e.Status != ApprovedMechanic
+	notForced := e.Status != ForcedMechanic
+	if notApproved || notForced {
+		return false
+	}
 	switch e.MechanicType {
-	case beforAndNow:
+	case BeforAndNowMechanic:
 		if !validMechanicTypeBeforeAndNow(e.MechanicType, e.OfferPrice, e.OportunityPrice) {
 			return false
 		}
@@ -30,7 +44,7 @@ func (e *Mechanic) Validate() bool {
 		if e.UnitOfferPrice > 0 {
 			return false
 		}
-	case nXP:
+	case NXPMechanic:
 		if !validMechanicTypeNXP(e.MechanicType, e.ProductQuantity, e.UnitOfferPrice) {
 			return false
 		}
@@ -47,7 +61,7 @@ func (e *Mechanic) Validate() bool {
 }
 
 func validMechanicTypeBeforeAndNow(mechanicType int, offerPrice int, oportunityPrice int) bool {
-	if mechanicType == beforAndNow {
+	if mechanicType == BeforAndNowMechanic {
 		return false
 	}
 	if offerPrice <= 0 {
@@ -63,7 +77,7 @@ func validMechanicTypeBeforeAndNow(mechanicType int, offerPrice int, oportunityP
 }
 
 func validMechanicTypeNXP(mechanicType int, productQuanity int, unitOfferPrice float64) bool {
-	if mechanicType == nXP {
+	if mechanicType == NXPMechanic {
 		return false
 	}
 	if productQuanity <= 0 {
